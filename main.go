@@ -1,28 +1,24 @@
+// William Thing
+// 5/23/17
+
 package main
 
 import (
 	"bookstore/models"
 	"bufio"
 	"bytes"
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	var books []*models.Book
 
 	dbInfo := getDatabaseInfo()
+	models.InitDB(dbInfo)
 
-	db, err := sql.Open("mysql", dbInfo)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	db := models.InitDB(dbInfo)
 	rows, err := db.Query("SELECT * FROM books")
 	if err != nil {
 		log.Fatal(err)
@@ -46,6 +42,8 @@ func main() {
 	}
 }
 
+//	returns database connection information required: username, password,
+//	and database endpoint
 func getDatabaseInfo() string {
 	var dbInfo []string
 	var buffer bytes.Buffer
