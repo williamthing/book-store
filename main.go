@@ -13,27 +13,11 @@ import (
 )
 
 func main() {
-	var books []*models.Book
-
 	dbInfo := getDatabaseInfo()
 	models.InitDB(dbInfo)
 
-	db := models.InitDB(dbInfo)
-	rows, err := db.Query("SELECT * FROM books")
+	books, err := models.AllBooks()
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		book := new(models.Book)
-		err := rows.Scan(&book.Isbn, &book.Title, &book.Author, &book.Price)
-		if err != nil {
-			log.Fatal(err)
-		}
-		books = append(books, book)
-	}
-	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
 

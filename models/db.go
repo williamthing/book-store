@@ -7,8 +7,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func InitDB(dbInfo string) *sql.DB {
-	db, err := sql.Open("mysql", dbInfo)
+var db *sql.DB
+
+// InitDB opens connections to mysql database given dbInfo
+func InitDB(dbInfo string) {
+	var err error
+	db, err = sql.Open("mysql", dbInfo)
 
 	if err != nil {
 		log.Fatal(err)
@@ -17,5 +21,4 @@ func InitDB(dbInfo string) *sql.DB {
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
-	return db
 }
