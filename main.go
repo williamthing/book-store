@@ -13,7 +13,6 @@ import (
 
 func main() {
 	models.InitDB()
-
 	http.HandleFunc("/books", booksIndex)
 	http.HandleFunc("/books/show", booksShow)
 	http.HandleFunc("/books/create", booksCreate)

@@ -27,8 +27,8 @@ func InitDB() {
 	}
 }
 
-//	returns database connection information required: username, password,
-//	and database endpoint
+// getDatabaseInfo returns database connection information required: username,
+// password, and database endpoint
 func getDatabaseInfo() string {
 	var dbInfo []string
 	var buffer bytes.Buffer
