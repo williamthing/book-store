@@ -5,19 +5,34 @@ package main
 
 import (
 	"bookstore/models"
-	"fmt"
-	"log"
+	"encoding/json"
+	"net/http"
 )
 
 func main() {
 	models.InitDB()
 
-	books, err := models.AllBooks()
-	if err != nil {
-		log.Fatal(err)
+	http.HandleFunc("/books", booksIndex)
+	http.ListenAndServe(":3000", nil)
+}
+
+func booksIndex(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, http.StatusText(405), 405)
+		return
 	}
 
-	for _, bk := range books {
-		fmt.Printf("%s, %s, %s, $%.2f\n", bk.Isbn, bk.Title, bk.Author, bk.Price)
+	books, err := models.AllBooks()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	booksJSON, err := json.Marshal(books)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(booksJSON)
 }
