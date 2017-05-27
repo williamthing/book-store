@@ -41,3 +41,21 @@ func GetBook(isbn string) (*Book, error) {
 
 	return book, err
 }
+
+// CreateBook will insert a book given a isbn, title, author, and price
+// error if could not insert
+func CreateBook(isbn string, title string, author string, price string) error {
+	query, err := db.Prepare("INSERT books SET isbn=?, title=?, author=?, price=?")
+	if err != nil {
+		return err
+	}
+	result, err := query.Exec(isbn, title, author, price)
+	if err != nil {
+		return err
+	}
+	_, err = result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	return nil
+}

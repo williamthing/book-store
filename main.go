@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 
 	http.HandleFunc("/books", booksIndex)
 	http.HandleFunc("/books/show", booksShow)
+	http.HandleFunc("/books/create", booksCreate)
 	http.ListenAndServe(":3000", nil)
 }
 
@@ -69,4 +71,31 @@ func booksShow(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(bookJSON)
+}
+
+// booksCreate adds a book to the bookstore given a valid isbn, title
+// and price
+func booksCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, http.StatusText(405), 405)
+		return
+	}
+
+	isbn := r.FormValue("isbn")
+	title := r.FormValue("title")
+	author := r.FormValue("author")
+	if isbn == "" || title == "" || author == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return
+	}
+	price := r.FormValue("price")
+	_, err := strconv.ParseFloat(price, 32)
+	if err != nil {
+		http.Error(w, http.StatusText(400), 400)
+		return
+	}
+	err = models.CreateBook(isbn, title, author, price)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
