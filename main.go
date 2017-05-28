@@ -1,5 +1,7 @@
 // William Thing
 // 5/23/17
+// A Bookstore web application that allows users to
+// browse, add, and remove book(s).
 
 package main
 
@@ -16,6 +18,7 @@ func main() {
 	http.HandleFunc("/books", booksIndex)
 	http.HandleFunc("/books/show", booksShow)
 	http.HandleFunc("/books/create", booksCreate)
+	http.HandleFunc("/books/delete", booksDelete)
 	http.ListenAndServe(":3000", nil)
 }
 
@@ -94,6 +97,22 @@ func booksCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = models.CreateBook(isbn, title, author, price)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func booksDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "DELETE" {
+		http.Error(w, http.StatusText(405), 405)
+		return
+	}
+	isbn := r.FormValue("isbn")
+	if isbn == "" {
+		http.Error(w, http.StatusText(400), 400)
+		return
+	}
+	err := models.DeleteBook(isbn)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

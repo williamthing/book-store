@@ -59,3 +59,19 @@ func CreateBook(isbn string, title string, author string, price string) error {
 	}
 	return nil
 }
+
+func DeleteBook(isbn string) error {
+	query, err := db.Prepare("DELETE FROM books WHERE isbn=?")
+	if err != nil {
+		return err
+	}
+	result, err := query.Exec(isbn)
+	if err != nil {
+		return err
+	}
+	_, err = result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	return nil
+}
