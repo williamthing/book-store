@@ -102,6 +102,7 @@ func booksCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// booksDelete deletes a book from the bookstore given a valid isbn
 func booksDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "DELETE" {
 		http.Error(w, http.StatusText(405), 405)
@@ -116,4 +117,6 @@ func booksDelete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	body := []byte("Successfully deleted book.")
+	w.Write(body)
 }
